@@ -1,6 +1,10 @@
+from django.contrib.auth import authenticate
+from django.contrib.auth.models import User
+from rest_framework.authtoken.models import Token
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
+
 from .serializers import LoginSerializer, RegisterSerializer
 
 
@@ -10,8 +14,16 @@ class RegisterView(APIView):
 
         if serializer.is_valid():
             user = serializer.save()
+
+            token, _ = Token.objects.get_or_create(user=user)
+
             return Response(
-                {"message": "User created", "user_id": user.id},
+                {
+                    "token": token.key,
+                    "username": user.username,
+                    "email": user.email,
+                    "user_id": user.id,
+                },
                 status=status.HTTP_201_CREATED,
             )
 
@@ -25,11 +37,14 @@ class LoginView(APIView):
         if serializer.is_valid():
             user = serializer.validated_data["user"]
 
+            token, _ = Token.objects.get_or_create(user=user)
+
             return Response(
                 {
-                    "message": "Login successful",
-                    "user_id": user.id,
+                    "token": token.key,
                     "username": user.username,
+                    "email": user.email,
+                    "user_id": user.id,
                 },
                 status=status.HTTP_200_OK,
             )
