@@ -22,6 +22,8 @@ INSTALLED_APPS = [
     "rest_framework",
     "rest_framework.authtoken",
     "profile_app.apps.ProfileAppConfig",
+    "offers_app.apps.OffersAppConfig",
+    "django_filters",
 ]
 
 
@@ -107,4 +109,10 @@ REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": [
         "rest_framework.authentication.TokenAuthentication",
     ]
+}
+
+
+REST_FRAMEWORK = {
+    "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
+    "PAGE_SIZE": 6,
 }
