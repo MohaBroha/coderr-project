@@ -9,7 +9,16 @@ class OfferDetailSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = OfferDetail
-        fields = ["id", "url"]
+        fields = [
+            "id",
+            "url",
+            "title",
+            "revisions",
+            "price",
+            "delivery_time",
+            "features",
+            "offer_type",
+        ]
 
     def get_url(self, obj):
         return f"/offerdetails/{obj.id}/"
@@ -39,12 +48,10 @@ class OfferSerializer(serializers.ModelSerializer):
         ]
 
     def get_min_price(self, obj):
-        value = obj.details.aggregate(Min("price"))["price__min"]
-        return value if value is not None else 0
+        return getattr(obj, "min_price", 0) or 0
 
     def get_min_delivery_time(self, obj):
-        value = obj.details.aggregate(Min("delivery_time"))["delivery_time__min"]
-        return value if value is not None else 0
+        return getattr(obj, "min_delivery_time", 0) or 0
 
     def get_user_details(self, obj):
         user = obj.user
@@ -53,3 +60,61 @@ class OfferSerializer(serializers.ModelSerializer):
             "last_name": user.last_name or "",
             "username": user.username,
         }
+
+    class OfferDetailListSerializer(serializers.ModelSerializer):
+        url = serializers.SerializerMethodField()
+
+        class Meta:
+            model = OfferDetail
+            fields = ["id", "url"]
+
+        def get_url(self, obj):
+            return f"/offerdetails/{obj.id}/"
+
+
+class OfferDetailCreateSerializer(serializers.ModelSerializer):
+    delivery_time_in_days = serializers.IntegerField(source="delivery_time")
+
+    class Meta:
+        model = OfferDetail
+        fields = [
+            "title",
+            "revisions",
+            "price",
+            "delivery_time_in_days",
+            "features",
+            "offer_type",
+        ]
+
+
+class OfferCreateSerializer(serializers.ModelSerializer):
+    details = OfferDetailCreateSerializer(many=True)
+
+    class Meta:
+        model = Offer
+        fields = [
+            "id",
+            "title",
+            "image",
+            "description",
+            "details",
+        ]
+
+    def create(self, validated_data):
+        details_data = validated_data.pop("details")
+        user = self.context["request"].user
+
+        offer = Offer.objects.create(user=user, **validated_data)
+
+        for detail in details_data:
+            OfferDetail.objects.create(
+                offer=offer,
+                title=detail["title"],
+                revisions=detail["revisions"],
+                price=detail["price"],
+                delivery_time=detail["delivery_time"],
+                features=detail["features"],
+                offer_type=detail["offer_type"],
+            )
+
+        return offer
