@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from rest_framework.generics import ListCreateAPIView
+from rest_framework.generics import ListCreateAPIView, RetrieveAPIView
 from django_filters.rest_framework import DjangoFilterBackend
 from .filters import OfferFilter, OfferPagination
 from django.db.models import Min
@@ -7,7 +7,7 @@ from django.db.models import Min
 from rest_framework.filters import SearchFilter, OrderingFilter
 
 from .models import Offer
-from .serializer import OfferCreateSerializer, OfferSerializer
+from .serializer import OfferCreateSerializer, OfferSerializer, OfferRetrieveSerializer
 from .permissions import IsBusinessUser
 
 
@@ -33,3 +33,12 @@ class OfferListView(ListCreateAPIView):
 
     def perform_create(self, serializer):
         serializer.save()
+
+
+class OfferDetailView(RetrieveAPIView):
+    serializer_class = OfferRetrieveSerializer
+
+    queryset = Offer.objects.annotate(
+        min_price=Min("details__price"),
+        min_delivery_time=Min("details__delivery_time"),
+    )

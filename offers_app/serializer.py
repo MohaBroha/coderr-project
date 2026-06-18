@@ -61,15 +61,16 @@ class OfferSerializer(serializers.ModelSerializer):
             "username": user.username,
         }
 
-    class OfferDetailListSerializer(serializers.ModelSerializer):
-        url = serializers.SerializerMethodField()
 
-        class Meta:
-            model = OfferDetail
-            fields = ["id", "url"]
+class OfferDetailListSerializer(serializers.ModelSerializer):
+    url = serializers.SerializerMethodField()
 
-        def get_url(self, obj):
-            return f"/offerdetails/{obj.id}/"
+    class Meta:
+        model = OfferDetail
+        fields = ["id", "url"]
+
+    def get_url(self, obj):
+        return f"/offerdetails/{obj.id}/"
 
 
 class OfferDetailCreateSerializer(serializers.ModelSerializer):
@@ -118,3 +119,31 @@ class OfferCreateSerializer(serializers.ModelSerializer):
             )
 
         return offer
+
+
+class OfferRetrieveSerializer(serializers.ModelSerializer):
+    details = OfferDetailListSerializer(many=True, read_only=True)
+
+    min_price = serializers.SerializerMethodField()
+    min_delivery_time = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Offer
+        fields = [
+            "id",
+            "user",
+            "title",
+            "image",
+            "description",
+            "created_at",
+            "updated_at",
+            "details",
+            "min_price",
+            "min_delivery_time",
+        ]
+
+    def get_min_price(self, obj):
+        return getattr(obj, "min_price", 0) or 0
+
+    def get_min_delivery_time(self, obj):
+        return getattr(obj, "min_delivery_time", 0) or 0
