@@ -77,7 +77,7 @@ class ReviewDetailView(RetrieveUpdateDestroyAPIView):
         return ReviewSerializer
 
     def get_permissions(self):
-        if self.request.method == "PATCH":
+        if self.request.method in ["PATCH", "DELETE"]:
             return [
                 IsAuthenticated(),
                 IsReviewOwner(),
