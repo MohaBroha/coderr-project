@@ -1,21 +1,24 @@
 from django.shortcuts import render
-from rest_framework.generics import ListCreateAPIView, RetrieveAPIView
+from rest_framework.generics import ListCreateAPIView
 from django_filters.rest_framework import DjangoFilterBackend
 from .filters import OfferFilter, OfferPagination
 from django.db.models import Min
 
 from rest_framework.filters import SearchFilter, OrderingFilter
 
-from .models import Offer
+from .models import Offer, OfferDetail
 from .serializer import (
     OfferCreateSerializer,
     OfferSerializer,
     OfferRetrieveSerializer,
     OfferPatchSerializer,
+    OfferDetailRetrieveSerializer,
 )
 from .permissions import IsBusinessUser
 from rest_framework.generics import RetrieveUpdateDestroyAPIView
 from .permissions import IsOfferOwner
+from rest_framework.generics import RetrieveAPIView
+from rest_framework.permissions import IsAuthenticated
 
 
 class OfferListView(ListCreateAPIView):
@@ -74,3 +77,9 @@ class OfferDetailView(RetrieveUpdateDestroyAPIView):
             )
 
         return obj
+
+
+class OfferDetailRetrieveView(RetrieveAPIView):
+    queryset = OfferDetail.objects.all()
+    serializer_class = OfferDetailRetrieveSerializer
+    permission_classes = [IsAuthenticated]

@@ -207,3 +207,19 @@ class OfferPatchSerializer(serializers.ModelSerializer):
                 detail.save()
 
         return instance
+
+
+class OfferDetailRetrieveSerializer(serializers.ModelSerializer):
+    delivery_time_in_days = serializers.IntegerField(source="delivery_time")
+
+    class Meta:
+        model = OfferDetail
+        fields = [
+            "id",
+            "title",
+            "revisions",
+            "delivery_time_in_days",
+            "price",
+            "features",
+            "offer_type",
+        ]
