@@ -14,6 +14,7 @@ from .serializer import (
     OrderSerializer,
     OrderCreateSerializer,
     OrderCountSerializer,
+    CompletedOrderCountSerializer,
 )
 
 from rest_framework import status
@@ -150,6 +151,35 @@ class OrderCountView(APIView):
         serializer = OrderCountSerializer(
             {
                 "order_count": order_count,
+            }
+        )
+
+        return Response(serializer.data)
+
+
+class CompletedOrderCountView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(
+        self,
+        request,
+        business_user_id,
+    ):
+        User = get_user_model()
+
+        user = get_object_or_404(
+            User,
+            id=business_user_id,
+        )
+
+        completed_order_count = Order.objects.filter(
+            business_user=user,
+            status="completed",
+        ).count()
+
+        serializer = CompletedOrderCountSerializer(
+            {
+                "completed_order_count": completed_order_count,
             }
         )
 

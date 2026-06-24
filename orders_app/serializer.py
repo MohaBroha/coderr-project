@@ -64,3 +64,7 @@ class OrderPatchSerializer(serializers.ModelSerializer):
 
 class OrderCountSerializer(serializers.Serializer):
     order_count = serializers.IntegerField()
+
+
+class CompletedOrderCountSerializer(serializers.Serializer):
+    completed_order_count = serializers.IntegerField()
