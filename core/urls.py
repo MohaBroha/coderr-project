@@ -11,4 +11,8 @@ urlpatterns = [
         "api/",
         include("reviews_app.urls"),
     ),
+    path(
+        "api/",
+        include("base_info_app.urls"),
+    ),
 ]
