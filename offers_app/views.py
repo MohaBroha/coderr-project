@@ -14,7 +14,7 @@ from .serializer import (
     OfferPatchSerializer,
 )
 from .permissions import IsBusinessUser
-from rest_framework.generics import RetrieveUpdateAPIView
+from rest_framework.generics import RetrieveUpdateDestroyAPIView
 from .permissions import IsOfferOwner
 
 
@@ -42,7 +42,7 @@ class OfferListView(ListCreateAPIView):
         serializer.save()
 
 
-class OfferDetailView(RetrieveUpdateAPIView):
+class OfferDetailView(RetrieveUpdateDestroyAPIView):
     serializer_class = OfferRetrieveSerializer
 
     queryset = Offer.objects.annotate(
@@ -56,7 +56,7 @@ class OfferDetailView(RetrieveUpdateAPIView):
         return OfferRetrieveSerializer
 
     def get_permissions(self):
-        if self.request.method == "PATCH":
+        if self.request.method in ["PATCH", "DELETE"]:
             return [
                 IsBusinessUser(),
                 IsOfferOwner(),
@@ -67,7 +67,7 @@ class OfferDetailView(RetrieveUpdateAPIView):
     def get_object(self):
         obj = super().get_object()
 
-        if self.request.method == "PATCH":
+        if self.request.method in ["PATCH", "DELETE"]:
             self.check_object_permissions(
                 self.request,
                 obj,
