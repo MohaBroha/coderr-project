@@ -1,4 +1,6 @@
 from django.db.models import Q
+from django.shortcuts import get_object_or_404
+from rest_framework.views import APIView
 
 from rest_framework.generics import (
     ListCreateAPIView,
@@ -7,9 +9,16 @@ from rest_framework.generics import (
 from rest_framework.permissions import IsAuthenticated
 
 from .models import Order
-from .serializer import OrderPatchSerializer, OrderSerializer, OrderCreateSerializer
+from .serializer import (
+    OrderPatchSerializer,
+    OrderSerializer,
+    OrderCreateSerializer,
+    OrderCountSerializer,
+)
+
 from rest_framework import status
 from rest_framework.response import Response
+from django.contrib.auth import get_user_model
 from .permissions import (
     IsBusinessUser,
     IsCustomerUser,
@@ -116,3 +125,32 @@ class OrderDetailView(RetrieveUpdateDestroyAPIView):
         )
 
         return obj
+
+
+class OrderCountView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(
+        self,
+        request,
+        business_user_id,
+    ):
+        User = get_user_model()
+
+        user = get_object_or_404(
+            User,
+            id=business_user_id,
+        )
+
+        order_count = Order.objects.filter(
+            business_user=user,
+            status="in_progress",
+        ).count()
+
+        serializer = OrderCountSerializer(
+            {
+                "order_count": order_count,
+            }
+        )
+
+        return Response(serializer.data)

@@ -60,3 +60,7 @@ class OrderPatchSerializer(serializers.ModelSerializer):
         fields = [
             "status",
         ]
+
+
+class OrderCountSerializer(serializers.Serializer):
+    order_count = serializers.IntegerField()
