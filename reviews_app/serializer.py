@@ -31,3 +31,20 @@ class ReviewCreateSerializer(serializers.ModelSerializer):
             reviewer=self.context["request"].user,
             **validated_data,
         )
+
+    def validate(self, attrs):
+        reviewer = self.context["request"].user
+        business_user = attrs["business_user"]
+
+        if reviewer == business_user:
+            raise serializers.ValidationError("You cannot review yourself.")
+
+        if Review.objects.filter(
+            reviewer=reviewer,
+            business_user=business_user,
+        ).exists():
+            raise serializers.ValidationError(
+                "You have already reviewed this business user."
+            )
+
+        return attrs

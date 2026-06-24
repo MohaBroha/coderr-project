@@ -1,14 +1,16 @@
 from rest_framework.filters import OrderingFilter
-from rest_framework.generics import ListAPIView
+from rest_framework.generics import ListCreateAPIView
 from rest_framework.permissions import IsAuthenticated
 
 from .models import Review
-from .serializer import ReviewSerializer
+from .serializer import ReviewSerializer, ReviewCreateSerializer
+from rest_framework import status
+from rest_framework.response import Response
+from .permissions import IsCustomerUser
 
 
-class ReviewListView(ListAPIView):
+class ReviewListView(ListCreateAPIView):
     queryset = Review.objects.all()
-    serializer_class = ReviewSerializer
     permission_classes = [IsAuthenticated]
     pagination_class = None
 
@@ -32,3 +34,32 @@ class ReviewListView(ListAPIView):
             queryset = queryset.filter(reviewer_id=reviewer_id)
 
         return queryset
+
+    def get_serializer_class(self):
+        if self.request.method == "POST":
+            return ReviewCreateSerializer
+
+        return ReviewSerializer
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+
+        serializer.is_valid(raise_exception=True)
+
+        review = serializer.save()
+
+        return Response(
+            ReviewSerializer(review).data,
+            status=status.HTTP_201_CREATED,
+        )
+
+    def get_permissions(self):
+        if self.request.method == "POST":
+            return [
+                IsAuthenticated(),
+                IsCustomerUser(),
+            ]
+
+        return [
+            IsAuthenticated(),
+        ]
