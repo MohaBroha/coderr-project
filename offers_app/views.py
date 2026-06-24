@@ -7,8 +7,15 @@ from django.db.models import Min
 from rest_framework.filters import SearchFilter, OrderingFilter
 
 from .models import Offer
-from .serializer import OfferCreateSerializer, OfferSerializer, OfferRetrieveSerializer
+from .serializer import (
+    OfferCreateSerializer,
+    OfferSerializer,
+    OfferRetrieveSerializer,
+    OfferPatchSerializer,
+)
 from .permissions import IsBusinessUser
+from rest_framework.generics import RetrieveUpdateAPIView
+from .permissions import IsOfferOwner
 
 
 class OfferListView(ListCreateAPIView):
@@ -35,10 +42,35 @@ class OfferListView(ListCreateAPIView):
         serializer.save()
 
 
-class OfferDetailView(RetrieveAPIView):
+class OfferDetailView(RetrieveUpdateAPIView):
     serializer_class = OfferRetrieveSerializer
 
     queryset = Offer.objects.annotate(
         min_price=Min("details__price"),
         min_delivery_time=Min("details__delivery_time"),
     )
+
+    def get_serializer_class(self):
+        if self.request.method == "PATCH":
+            return OfferPatchSerializer
+        return OfferRetrieveSerializer
+
+    def get_permissions(self):
+        if self.request.method == "PATCH":
+            return [
+                IsBusinessUser(),
+                IsOfferOwner(),
+            ]
+
+        return []
+
+    def get_object(self):
+        obj = super().get_object()
+
+        if self.request.method == "PATCH":
+            self.check_object_permissions(
+                self.request,
+                obj,
+            )
+
+        return obj

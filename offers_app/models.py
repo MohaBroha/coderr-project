@@ -21,11 +21,9 @@ class Offer(models.Model):
 class OfferDetail(models.Model):
     offer = models.ForeignKey(Offer, related_name="details", on_delete=models.CASCADE)
 
-    # Core pricing fields
     price = models.FloatField()
     delivery_time = models.IntegerField()
 
-    # Contract fields (POST + GET required)
     title = models.CharField(max_length=255)
     revisions = models.IntegerField()
     features = models.JSONField()

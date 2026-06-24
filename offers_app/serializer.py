@@ -147,3 +147,63 @@ class OfferRetrieveSerializer(serializers.ModelSerializer):
 
     def get_min_delivery_time(self, obj):
         return getattr(obj, "min_delivery_time", 0) or 0
+
+
+class OfferDetailPatchSerializer(serializers.ModelSerializer):
+    delivery_time_in_days = serializers.IntegerField(
+        source="delivery_time",
+        required=False,
+    )
+
+    class Meta:
+        model = OfferDetail
+        fields = [
+            "id",
+            "title",
+            "revisions",
+            "delivery_time_in_days",
+            "price",
+            "features",
+            "offer_type",
+        ]
+
+
+class OfferPatchSerializer(serializers.ModelSerializer):
+    details = OfferDetailPatchSerializer(
+        many=True,
+        required=False,
+    )
+
+    class Meta:
+        model = Offer
+        fields = [
+            "id",
+            "title",
+            "image",
+            "description",
+            "details",
+        ]
+
+    def update(self, instance, validated_data):
+        details_data = validated_data.pop("details", None)
+
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+
+        instance.save()
+
+        if details_data:
+            for detail_data in details_data:
+                offer_type = detail_data.get("offer_type")
+
+                try:
+                    detail = instance.details.get(offer_type=offer_type)
+                except OfferDetail.DoesNotExist:
+                    continue
+
+                for attr, value in detail_data.items():
+                    setattr(detail, attr, value)
+
+                detail.save()
+
+        return instance
