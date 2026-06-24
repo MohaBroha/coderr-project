@@ -4,15 +4,16 @@ from rest_framework.generics import ListAPIView, ListCreateAPIView
 from rest_framework.permissions import IsAuthenticated
 
 from .models import Order
-from .serializer import OrderSerializer, OrderCreateSerializer
+from .serializer import OrderPatchSerializer, OrderSerializer, OrderCreateSerializer
 from rest_framework import status
 from rest_framework.response import Response
-from .permissions import IsCustomerUser
+from .permissions import IsBusinessUser, IsCustomerUser, IsOrderBusinessOwner
+from rest_framework.generics import RetrieveUpdateAPIView
 
 
 class OrderListView(ListCreateAPIView):
     serializer_class = OrderSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, IsCustomerUser]
     pagination_class = None
 
     def get_queryset(self):
@@ -52,3 +53,54 @@ class OrderListView(ListCreateAPIView):
         return [
             IsAuthenticated(),
         ]
+
+
+class OrderPatchView(RetrieveUpdateAPIView):
+    queryset = Order.objects.all()
+    serializer_class = OrderPatchSerializer
+
+    def get_permissions(self):
+        if self.request.method == "PATCH":
+            return [
+                IsBusinessUser(),
+                IsOrderBusinessOwner(),
+            ]
+
+        return []
+
+    def get_object(self):
+        obj = super().get_object()
+
+        self.check_object_permissions(
+            self.request,
+            obj,
+        )
+
+        return obj
+
+    def update(self, request, *args, **kwargs):
+        partial = kwargs.pop(
+            "partial",
+            True,
+        )
+
+        instance = self.get_object()
+
+        serializer = self.get_serializer(
+            instance,
+            data=request.data,
+            partial=partial,
+        )
+
+        serializer.is_valid(
+            raise_exception=True,
+        )
+
+        serializer.save()
+
+        return Response(
+            OrderSerializer(instance).data,
+            status=status.HTTP_200_OK,
+        )
+
+        return obj

@@ -52,3 +52,11 @@ class OrderCreateSerializer(serializers.Serializer):
         )
 
         return order
+
+
+class OrderPatchSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Order
+        fields = [
+            "status",
+        ]
