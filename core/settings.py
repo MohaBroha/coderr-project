@@ -25,6 +25,7 @@ INSTALLED_APPS = [
     "offers_app.apps.OffersAppConfig",
     "django_filters",
     "orders_app.apps.OrdersAppConfig",
+    "reviews_app.apps.ReviewsAppConfig",
 ]
 
 
