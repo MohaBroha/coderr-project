@@ -1,14 +1,21 @@
 from django.db.models import Q
 
-from rest_framework.generics import ListAPIView, ListCreateAPIView
+from rest_framework.generics import (
+    ListCreateAPIView,
+    RetrieveUpdateDestroyAPIView,
+)
 from rest_framework.permissions import IsAuthenticated
 
 from .models import Order
 from .serializer import OrderPatchSerializer, OrderSerializer, OrderCreateSerializer
 from rest_framework import status
 from rest_framework.response import Response
-from .permissions import IsBusinessUser, IsCustomerUser, IsOrderBusinessOwner
-from rest_framework.generics import RetrieveUpdateAPIView
+from .permissions import (
+    IsBusinessUser,
+    IsCustomerUser,
+    IsOrderBusinessOwner,
+    IsStaffUser,
+)
 
 
 class OrderListView(ListCreateAPIView):
@@ -55,7 +62,7 @@ class OrderListView(ListCreateAPIView):
         ]
 
 
-class OrderPatchView(RetrieveUpdateAPIView):
+class OrderDetailView(RetrieveUpdateDestroyAPIView):
     queryset = Order.objects.all()
     serializer_class = OrderPatchSerializer
 
@@ -64,6 +71,11 @@ class OrderPatchView(RetrieveUpdateAPIView):
             return [
                 IsBusinessUser(),
                 IsOrderBusinessOwner(),
+            ]
+
+        if self.request.method == "DELETE":
+            return [
+                IsStaffUser(),
             ]
 
         return []
