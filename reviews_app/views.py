@@ -1,12 +1,13 @@
 from rest_framework.filters import OrderingFilter
-from rest_framework.generics import ListCreateAPIView
+from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
+
 from rest_framework.permissions import IsAuthenticated
 
 from .models import Review
-from .serializer import ReviewSerializer, ReviewCreateSerializer
+from .serializer import ReviewSerializer, ReviewCreateSerializer, ReviewUpdateSerializer
 from rest_framework import status
 from rest_framework.response import Response
-from .permissions import IsCustomerUser
+from .permissions import IsCustomerUser, IsReviewOwner
 
 
 class ReviewListView(ListCreateAPIView):
@@ -63,3 +64,42 @@ class ReviewListView(ListCreateAPIView):
         return [
             IsAuthenticated(),
         ]
+
+
+class ReviewDetailView(RetrieveUpdateDestroyAPIView):
+    queryset = Review.objects.all()
+    permission_classes = [IsAuthenticated]
+
+    def get_serializer_class(self):
+        if self.request.method == "PATCH":
+            return ReviewUpdateSerializer
+
+        return ReviewSerializer
+
+    def get_permissions(self):
+        if self.request.method == "PATCH":
+            return [
+                IsAuthenticated(),
+                IsReviewOwner(),
+            ]
+
+        return [
+            IsAuthenticated(),
+        ]
+
+    def update(self, request, *args, **kwargs):
+        partial = kwargs.pop("partial", False)
+
+        instance = self.get_object()
+
+        serializer = self.get_serializer(
+            instance,
+            data=request.data,
+            partial=partial,
+        )
+
+        serializer.is_valid(raise_exception=True)
+
+        review = serializer.save()
+
+        return Response(ReviewSerializer(review).data)

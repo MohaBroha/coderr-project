@@ -6,3 +6,8 @@ class IsCustomerUser(BasePermission):
         return (
             hasattr(request.user, "profile") and request.user.profile.type == "customer"
         )
+
+
+class IsReviewOwner(BasePermission):
+    def has_object_permission(self, request, view, obj):
+        return obj.reviewer == request.user

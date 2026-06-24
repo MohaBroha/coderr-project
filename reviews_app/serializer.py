@@ -48,3 +48,12 @@ class ReviewCreateSerializer(serializers.ModelSerializer):
             )
 
         return attrs
+
+
+class ReviewUpdateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Review
+        fields = [
+            "rating",
+            "description",
+        ]
