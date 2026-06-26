@@ -17,7 +17,9 @@ class OfferFilter(django_filters.FilterSet):
         return queryset.filter(min_price__gte=value)
 
     def filter_max_delivery_time(self, queryset, name, value):
-        return queryset.filter(min_delivery__lte=value)
+        return queryset.filter(
+            min_delivery_time__lte=value,
+        )
 
 
 class OfferPagination(PageNumberPagination):
