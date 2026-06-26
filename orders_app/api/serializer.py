@@ -55,11 +55,31 @@ class OrderCreateSerializer(serializers.Serializer):
 
 
 class OrderPatchSerializer(serializers.ModelSerializer):
+    ALLOWED_STATUS = [
+        "in_progress",
+        "completed",
+        "cancelled",
+    ]
+
     class Meta:
         model = Order
         fields = [
             "status",
         ]
+
+    def validate(self, attrs):
+        invalid_fields = set(self.initial_data.keys()) - set(self.fields.keys())
+
+        if invalid_fields:
+            raise serializers.ValidationError("Only 'status' may be updated.")
+
+        return attrs
+
+    def validate_status(self, value):
+        if value not in self.ALLOWED_STATUS:
+            raise serializers.ValidationError("Invalid status.")
+
+        return value
 
 
 class OrderCountSerializer(serializers.Serializer):
