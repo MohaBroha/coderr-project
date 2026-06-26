@@ -4,6 +4,10 @@ from django.core.validators import MinValueValidator, MaxValueValidator
 
 
 class Review(models.Model):
+    """
+    Model representing a review written for a business user.
+    """
+
     business_user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
@@ -34,6 +38,10 @@ class Review(models.Model):
     )
 
     class Meta:
+        """
+        Metadata configuration for the review model.
+        """
+
         constraints = [
             models.UniqueConstraint(
                 fields=[

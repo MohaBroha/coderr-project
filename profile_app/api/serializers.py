@@ -3,11 +3,19 @@ from ..models import Profile
 
 
 class ProfileSerializer(serializers.ModelSerializer):
+    """
+    Serializer for representing and updating user profiles.
+    """
+
     username = serializers.CharField(source="user.username", read_only=True)
     email = serializers.CharField(source="user.email", read_only=True)
     user = serializers.IntegerField(source="user.id", read_only=True)
 
     class Meta:
+        """
+        Metadata configuration for the profile serializer.
+        """
+
         model = Profile
         fields = [
             "user",
@@ -26,6 +34,9 @@ class ProfileSerializer(serializers.ModelSerializer):
         read_only_fields = ["user", "username", "type", "created_at"]
 
     def to_representation(self, instance):
+        """
+        Return the serialized profile with empty strings instead of null values.
+        """
         data = super().to_representation(instance)
 
         fields = [
@@ -44,6 +55,9 @@ class ProfileSerializer(serializers.ModelSerializer):
         return data
 
     def update(self, instance, validated_data):
+        """
+        Update and return the profile instance.
+        """
         for attr, value in validated_data.items():
             setattr(instance, attr, value)
         instance.save()
@@ -51,10 +65,18 @@ class ProfileSerializer(serializers.ModelSerializer):
 
 
 class ProfileListSerializer(serializers.ModelSerializer):
+    """
+    Serializer for listing user profiles.
+    """
+
     username = serializers.CharField(source="user.username", read_only=True)
     user = serializers.IntegerField(source="user.id", read_only=True)
 
     class Meta:
+        """
+        Metadata configuration for the profile list serializer.
+        """
+
         model = Profile
         fields = [
             "user",

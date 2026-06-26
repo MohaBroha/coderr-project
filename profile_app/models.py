@@ -3,6 +3,10 @@ from django.contrib.auth.models import User
 
 
 class Profile(models.Model):
+    """
+    Model representing a user profile.
+    """
+
     USER_TYPE = (
         ("customer", "Customer"),
         ("business", "Business"),

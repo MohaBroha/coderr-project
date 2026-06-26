@@ -9,7 +9,14 @@ from .serializers import LoginSerializer, RegisterSerializer
 
 
 class RegisterView(APIView):
+    """
+    API view for registering a new user account.
+    """
+
     def post(self, request):
+        """
+        Register a new user and return an authentication token.
+        """
         serializer = RegisterSerializer(data=request.data)
 
         if serializer.is_valid():
@@ -31,7 +38,14 @@ class RegisterView(APIView):
 
 
 class LoginView(APIView):
+    """
+    API view for authenticating existing users.
+    """
+
     def post(self, request):
+        """
+        Authenticate a user and return an authentication token.
+        """
         serializer = LoginSerializer(data=request.data)
 
         if serializer.is_valid():

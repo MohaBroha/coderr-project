@@ -6,9 +6,17 @@ from django.shortcuts import get_object_or_404
 
 
 class OrderSerializer(serializers.ModelSerializer):
+    """
+    Serializer for representing orders.
+    """
+
     delivery_time_in_days = serializers.IntegerField(source="delivery_time")
 
     class Meta:
+        """
+        Metadata configuration for the order serializer.
+        """
+
         model = Order
         fields = [
             "id",
@@ -27,9 +35,16 @@ class OrderSerializer(serializers.ModelSerializer):
 
 
 class OrderCreateSerializer(serializers.Serializer):
+    """
+    Serializer for creating new orders.
+    """
+
     offer_detail_id = serializers.IntegerField()
 
     def create(self, validated_data):
+        """
+        Create a new order from the selected offer detail.
+        """
         offer_detail_id = validated_data["offer_detail_id"]
 
         offer_detail = get_object_or_404(
@@ -55,6 +70,10 @@ class OrderCreateSerializer(serializers.Serializer):
 
 
 class OrderPatchSerializer(serializers.ModelSerializer):
+    """
+    Serializer for updating the status of an order.
+    """
+
     ALLOWED_STATUS = [
         "in_progress",
         "completed",
@@ -62,12 +81,19 @@ class OrderPatchSerializer(serializers.ModelSerializer):
     ]
 
     class Meta:
+        """
+        Metadata configuration for the order patch serializer.
+        """
+
         model = Order
         fields = [
             "status",
         ]
 
     def validate(self, attrs):
+        """
+        Validate that only the status field is updated.
+        """
         invalid_fields = set(self.initial_data.keys()) - set(self.fields.keys())
 
         if invalid_fields:
@@ -76,6 +102,9 @@ class OrderPatchSerializer(serializers.ModelSerializer):
         return attrs
 
     def validate_status(self, value):
+        """
+        Validate that the provided status is allowed.
+        """
         if value not in self.ALLOWED_STATUS:
             raise serializers.ValidationError("Invalid status.")
 
@@ -83,8 +112,16 @@ class OrderPatchSerializer(serializers.ModelSerializer):
 
 
 class OrderCountSerializer(serializers.Serializer):
+    """
+    Serializer for returning the number of active orders.
+    """
+
     order_count = serializers.IntegerField()
 
 
 class CompletedOrderCountSerializer(serializers.Serializer):
+    """
+    Serializer for returning the number of completed orders.
+    """
+
     completed_order_count = serializers.IntegerField()

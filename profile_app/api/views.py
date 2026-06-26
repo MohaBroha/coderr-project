@@ -10,12 +10,19 @@ from .permissions import IsProfileOwner
 
 
 class ProfileDetailView(APIView):
+    """
+    API view for retrieving and updating user profiles.
+    """
+
     permission_classes = [
         IsAuthenticated,
         IsProfileOwner,
     ]
 
     def get(self, request, pk):
+        """
+        Retrieve the profile of the specified user.
+        """
         profile = get_object_or_404(Profile, user_id=pk)
         self.check_object_permissions(
             request,
@@ -25,6 +32,9 @@ class ProfileDetailView(APIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def patch(self, request, pk):
+        """
+        Partially update the profile of the specified user.
+        """
         profile = get_object_or_404(Profile, user_id=pk)
 
         self.check_object_permissions(request, profile)
@@ -39,18 +49,32 @@ class ProfileDetailView(APIView):
 
 
 class BusinessProfilesView(APIView):
+    """
+    API view for listing all business profiles.
+    """
+
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
+        """
+        Return all business profiles.
+        """
         profiles = Profile.objects.filter(type="business")
         serializer = ProfileListSerializer(profiles, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 class CustomerProfilesView(APIView):
+    """
+    API view for listing all customer profiles.
+    """
+
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
+        """
+        Return all customer profiles.
+        """
         profiles = Profile.objects.filter(type="customer")
         serializer = ProfileListSerializer(profiles, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)

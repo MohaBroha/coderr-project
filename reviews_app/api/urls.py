@@ -1,3 +1,7 @@
+"""
+URL configuration for the reviews API.
+"""
+
 from django.urls import path
 
 from .views import ReviewListView, ReviewDetailView

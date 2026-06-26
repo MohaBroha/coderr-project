@@ -5,6 +5,10 @@ User = get_user_model()
 
 
 class Order(models.Model):
+    """
+    Model representing an order placed by a customer.
+    """
+
     customer_user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
@@ -43,4 +47,7 @@ class Order(models.Model):
     )
 
     def __str__(self):
+        """
+        Return the title of the order.
+        """
         return self.title

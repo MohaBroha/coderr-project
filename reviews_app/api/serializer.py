@@ -4,7 +4,15 @@ from ..models import Review
 
 
 class ReviewSerializer(serializers.ModelSerializer):
+    """
+    Serializer for representing reviews.
+    """
+
     class Meta:
+        """
+        Metadata configuration for the review serializer.
+        """
+
         model = Review
         fields = [
             "id",
@@ -18,7 +26,15 @@ class ReviewSerializer(serializers.ModelSerializer):
 
 
 class ReviewCreateSerializer(serializers.ModelSerializer):
+    """
+    Serializer for creating new reviews.
+    """
+
     class Meta:
+        """
+        Metadata configuration for the review creation serializer.
+        """
+
         model = Review
         fields = [
             "business_user",
@@ -27,12 +43,19 @@ class ReviewCreateSerializer(serializers.ModelSerializer):
         ]
 
     def create(self, validated_data):
+        """
+        Create and return a new review for the authenticated user.
+        """
         return Review.objects.create(
             reviewer=self.context["request"].user,
             **validated_data,
         )
 
     def validate(self, attrs):
+        """
+        Validate that users cannot review themselves or submit multiple reviews
+        for the same business user.
+        """
         reviewer = self.context["request"].user
         business_user = attrs["business_user"]
 
@@ -49,7 +72,15 @@ class ReviewCreateSerializer(serializers.ModelSerializer):
 
 
 class ReviewUpdateSerializer(serializers.ModelSerializer):
+    """
+    Serializer for updating existing reviews.
+    """
+
     class Meta:
+        """
+        Metadata configuration for the review update serializer.
+        """
+
         model = Review
         fields = [
             "rating",

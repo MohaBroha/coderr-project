@@ -1,3 +1,7 @@
+"""
+URL configuration for the authentication API.
+"""
+
 from django.urls import path
 from .views import RegisterView, LoginView
 

@@ -29,11 +29,18 @@ from .permissions import (
 
 
 class OrderListView(ListCreateAPIView):
+    """
+    API view for listing and creating orders.
+    """
+
     serializer_class = OrderSerializer
     permission_classes = [IsAuthenticated, IsCustomerUser]
     pagination_class = None
 
     def get_queryset(self):
+        """
+        Return all orders related to the authenticated user.
+        """
         user = self.request.user
 
         return Order.objects.filter(
@@ -41,15 +48,24 @@ class OrderListView(ListCreateAPIView):
         ).order_by("-updated_at")
 
     def get_serializer_class(self):
+        """
+        Return the serializer class for the current request.
+        """
         if self.request.method == "POST":
             return OrderCreateSerializer
 
         return OrderSerializer
 
     def perform_create(self, serializer):
+        """
+        Save a newly created order.
+        """
         serializer.save()
 
     def create(self, request, *args, **kwargs):
+        """
+        Create a new order and return its serialized representation.
+        """
         serializer = self.get_serializer(data=request.data)
 
         serializer.is_valid(raise_exception=True)
@@ -62,6 +78,9 @@ class OrderListView(ListCreateAPIView):
         )
 
     def get_permissions(self):
+        """
+        Return the permissions required for the current request.
+        """
         if self.request.method == "POST":
             return [
                 IsCustomerUser(),
@@ -73,10 +92,17 @@ class OrderListView(ListCreateAPIView):
 
 
 class OrderDetailView(RetrieveUpdateDestroyAPIView):
+    """
+    API view for retrieving, updating, and deleting orders.
+    """
+
     queryset = Order.objects.all()
     serializer_class = OrderPatchSerializer
 
     def get_permissions(self):
+        """
+        Return the permissions required for the current request.
+        """
         if self.request.method == "PATCH":
             return [
                 IsBusinessUser(),
@@ -91,6 +117,9 @@ class OrderDetailView(RetrieveUpdateDestroyAPIView):
         return []
 
     def get_object(self):
+        """
+        Retrieve the requested order and check object permissions.
+        """
         obj = super().get_object()
 
         self.check_object_permissions(
@@ -101,6 +130,9 @@ class OrderDetailView(RetrieveUpdateDestroyAPIView):
         return obj
 
     def update(self, request, *args, **kwargs):
+        """
+        Update an order and return its serialized representation.
+        """
         partial = kwargs.pop(
             "partial",
             True,
@@ -129,6 +161,10 @@ class OrderDetailView(RetrieveUpdateDestroyAPIView):
 
 
 class OrderCountView(APIView):
+    """
+    API view for retrieving the number of active orders for a business user.
+    """
+
     permission_classes = [IsAuthenticated]
 
     def get(
@@ -136,6 +172,9 @@ class OrderCountView(APIView):
         request,
         business_user_id,
     ):
+        """
+        Return the number of active orders for the specified business user.
+        """
         User = get_user_model()
 
         user = get_object_or_404(
@@ -158,6 +197,10 @@ class OrderCountView(APIView):
 
 
 class CompletedOrderCountView(APIView):
+    """
+    API view for retrieving the number of completed orders for a business user.
+    """
+
     permission_classes = [IsAuthenticated]
 
     def get(
@@ -165,6 +208,9 @@ class CompletedOrderCountView(APIView):
         request,
         business_user_id,
     ):
+        """
+        Return the number of completed orders for the specified business user.
+        """
         User = get_user_model()
 
         user = get_object_or_404(

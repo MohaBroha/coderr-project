@@ -9,7 +9,14 @@ from offers_app.models import Offer
 
 
 class BaseInfoView(APIView):
+    """
+    API view for retrieving aggregated platform statistics.
+    """
+
     def get(self, request):
+        """
+        Return general platform statistics.
+        """
         return Response(
             {
                 "review_count": Review.objects.count(),

@@ -2,4 +2,8 @@ from django.apps import AppConfig
 
 
 class OffersAppConfig(AppConfig):
-    name = 'offers_app'
+    """
+    Configuration for the offers application.
+    """
+
+    name = "offers_app"
