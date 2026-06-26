@@ -2,19 +2,19 @@
 
 ## Overview
 
-Coderr is a Django REST Framework backend for a freelancer marketplace platform. The project provides APIs for managing user accounts, offers, orders, reviews, and profile information.
+Coderr is a Django REST Framework backend for a freelancer marketplace platform. The project provides REST APIs for user authentication, profiles, offers, orders, reviews, and platform statistics.
 
 ## Features
 
-* User authentication and registration
+* User registration and authentication
 * Profile management
 * Offer management
-* Search and filtering for offers
-* Ordering and sorting
+* Order management
+* Review system
+* Search, filtering and ordering
 * RESTful API architecture
-* Django REST Framework
-* PostgreSQL/SQLite support
-* Media file uploads
+* Token authentication
+* Media file support
 
 ## Tech Stack
 
@@ -27,106 +27,125 @@ Coderr is a Django REST Framework backend for a freelancer marketplace platform.
 
 ## Installation
 
-### Clone Repository
+### 1. Clone the repository
 
 ```bash
-git clone <repository-url>
-cd coderr-project/backend
+git clone https://github.com/MohaBroha/coderr-project.git
 ```
 
-### Create Virtual Environment
+### 2. Navigate to the project directory
 
 ```bash
-python -m venv env
+cd coderr-project
 ```
 
-### Activate Environment
-
-Windows:
+### 3. Create a virtual environment
 
 ```bash
-env\Scripts\activate
+python -m venv venv
 ```
 
-Linux/Mac:
+### 4. Activate the virtual environment
+
+**Windows**
 
 ```bash
-source env/bin/activate
+venv\Scripts\activate
 ```
 
-### Install Dependencies
+**Linux / macOS**
+
+```bash
+source venv/bin/activate
+```
+
+### 5. Install the dependencies
 
 ```bash
 pip install -r requirements.txt
 ```
 
-### Apply Migrations
+### 6. Apply the database migrations
 
 ```bash
 python manage.py migrate
 ```
 
-### Start Development Server
+### 7. Start the development server
 
 ```bash
 python manage.py runserver
 ```
 
-Server runs at:
+The development server will be available at:
 
 ```text
 http://127.0.0.1:8000/
 ```
 
-## API Structure
+## API Endpoints
 
-### Authentication
+* Authentication
 
-* Registration
-* Login
-* User Management
+  * Registration
+  * Login
+
+* Profiles
+
+  * Profile Details
+  * Business Profiles
+  * Customer Profiles
+
+* Offers
+
+  * List Offers
+  * Offer Details
+  * Create Offer
+  * Update Offer
+  * Delete Offer
+
+* Orders
+
+  * List Orders
+  * Order Details
+  * Active Order Count
+  * Completed Order Count
+
+* Reviews
+
+  * List Reviews
+  * Create Review
+  * Update Review
+  * Delete Review
+
+* Base Information
+
+  * Platform Statistics
+
+## Search, Filter and Ordering
 
 ### Offers
 
-* Create Offer
-* Update Offer
-* Delete Offer
-* List Offers
-* Search Offers
-* Filter Offers
-* Ordering Offers
-
-### Profiles
-
-* Profile Details
-* Profile Updates
-
-## Search and Filter
-
-Available filters:
-
-* user
-
-Available search fields:
+**Search**
 
 * title
 * description
 
-Available ordering fields:
+**Filter**
+
+* creator_id
+* min_price
+* max_delivery_time
+
+**Ordering**
 
 * updated_at
 * min_price
 
-## Development Status
+## Development
 
-Current development focus:
-
-* Offer API
-* Filtering
-* Search functionality
-* Ordering functionality
+This project was built with Django REST Framework following a modular app structure and REST API best practices.
 
 ## Author
 
-Developer Academy Backend Project
 Moha Broha
