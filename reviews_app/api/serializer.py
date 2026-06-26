@@ -1,5 +1,5 @@
 from rest_framework import serializers
-
+from rest_framework.exceptions import PermissionDenied
 from ..models import Review
 
 
@@ -43,9 +43,7 @@ class ReviewCreateSerializer(serializers.ModelSerializer):
             reviewer=reviewer,
             business_user=business_user,
         ).exists():
-            raise serializers.ValidationError(
-                "You have already reviewed this business user."
-            )
+            raise PermissionDenied("You have already reviewed this business user.")
 
         return attrs
 
