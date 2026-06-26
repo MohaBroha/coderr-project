@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from django.db.models import Min
 
-from .models import Offer, OfferDetail
+from ..models import Offer, OfferDetail
 
 
 class OfferDetailSerializer(serializers.ModelSerializer):

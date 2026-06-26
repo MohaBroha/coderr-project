@@ -1,6 +1,6 @@
 from django.db.models import Min
 import django_filters
-from .models import Offer
+from ..models import Offer
 from rest_framework.pagination import PageNumberPagination
 
 

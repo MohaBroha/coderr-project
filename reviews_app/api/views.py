@@ -3,7 +3,7 @@ from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIV
 
 from rest_framework.permissions import IsAuthenticated
 
-from .models import Review
+from ..models import Review
 from .serializer import ReviewSerializer, ReviewCreateSerializer, ReviewUpdateSerializer
 from rest_framework import status
 from rest_framework.response import Response

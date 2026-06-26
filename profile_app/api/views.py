@@ -4,7 +4,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 
-from .models import Profile
+from ..models import Profile
 from .serializers import ProfileListSerializer, ProfileSerializer
 from .permissions import IsProfileOwner
 

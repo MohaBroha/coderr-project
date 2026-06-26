@@ -8,7 +8,7 @@ from rest_framework.generics import (
 )
 from rest_framework.permissions import IsAuthenticated
 
-from .models import Order
+from ..models import Order
 from .serializer import (
     OrderPatchSerializer,
     OrderSerializer,

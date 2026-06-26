@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from .models import Order
+from ..models import Order
 from offers_app.models import OfferDetail
 from django.shortcuts import get_object_or_404
 

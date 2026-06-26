@@ -6,7 +6,7 @@ from django.db.models import Min
 
 from rest_framework.filters import SearchFilter, OrderingFilter
 
-from .models import Offer, OfferDetail
+from ..models import Offer, OfferDetail
 from .serializer import (
     OfferCreateSerializer,
     OfferSerializer,
