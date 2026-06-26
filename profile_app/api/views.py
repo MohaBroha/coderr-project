@@ -10,11 +10,17 @@ from .permissions import IsProfileOwner
 
 
 class ProfileDetailView(APIView):
-    permission_classes = [IsProfileOwner]
+    permission_classes = [
+        IsAuthenticated,
+        IsProfileOwner,
+    ]
 
     def get(self, request, pk):
         profile = get_object_or_404(Profile, user_id=pk)
-
+        self.check_object_permissions(
+            request,
+            profile,
+        )
         serializer = ProfileSerializer(profile)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
