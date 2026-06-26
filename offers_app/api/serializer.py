@@ -1,5 +1,4 @@
 from rest_framework import serializers
-from django.db.models import Min
 
 from ..models import Offer, OfferDetail
 
@@ -73,12 +72,29 @@ class OfferDetailListSerializer(serializers.ModelSerializer):
         return f"/offerdetails/{obj.id}/"
 
 
+class OfferDetailAbsoluteUrlSerializer(serializers.ModelSerializer):
+    url = serializers.SerializerMethodField()
+
+    class Meta:
+        model = OfferDetail
+        fields = [
+            "id",
+            "url",
+        ]
+
+    def get_url(self, obj):
+        request = self.context.get("request")
+
+        return request.build_absolute_uri(f"/api/offerdetails/{obj.id}/")
+
+
 class OfferDetailCreateSerializer(serializers.ModelSerializer):
     delivery_time_in_days = serializers.IntegerField(source="delivery_time")
 
     class Meta:
         model = OfferDetail
         fields = [
+            "id",
             "title",
             "revisions",
             "price",
@@ -120,10 +136,19 @@ class OfferCreateSerializer(serializers.ModelSerializer):
 
         return offer
 
+    def validate_details(self, value):
+        if len(value) != 3:
+            raise serializers.ValidationError(
+                "An offer must contain exactly 3 details."
+            )
+        return value
+
 
 class OfferRetrieveSerializer(serializers.ModelSerializer):
-    details = OfferDetailListSerializer(many=True, read_only=True)
-
+    details = OfferDetailAbsoluteUrlSerializer(
+        many=True,
+        read_only=True,
+    )
     min_price = serializers.SerializerMethodField()
     min_delivery_time = serializers.SerializerMethodField()
 
