@@ -24,7 +24,6 @@ from rest_framework.permissions import IsAuthenticated
 class OfferListView(ListCreateAPIView):
     serializer_class = OfferSerializer
     pagination_class = OfferPagination
-    permission_classes = [IsBusinessUser]
 
     queryset = Offer.objects.order_by("-updated_at").annotate(
         min_price=Min("details__price"),
@@ -35,6 +34,12 @@ class OfferListView(ListCreateAPIView):
     filterset_class = OfferFilter
     search_fields = ["title", "description"]
     ordering_fields = ["updated_at", "min_price"]
+
+    def get_permissions(self):
+        if self.request.method == "POST":
+            return [IsBusinessUser()]
+
+        return []
 
     def get_serializer_class(self):
         if self.request.method == "POST":
@@ -59,6 +64,9 @@ class OfferDetailView(RetrieveUpdateDestroyAPIView):
         return OfferRetrieveSerializer
 
     def get_permissions(self):
+        if self.request.method == "GET":
+            return [IsAuthenticated()]
+
         if self.request.method in ["PATCH", "DELETE"]:
             return [
                 IsBusinessUser(),
