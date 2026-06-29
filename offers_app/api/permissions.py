@@ -10,7 +10,7 @@ class IsBusinessUser(BasePermission):
         """
         Check whether the requesting user is an authenticated business user.
         """
-        return request.user.is_authenticated and request.user.is_staff
+        return request.user.is_authenticated and request.user.profile.type == "business"
 
 
 class IsOfferOwner(BasePermission):
