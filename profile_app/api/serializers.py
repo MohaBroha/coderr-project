@@ -8,7 +8,7 @@ class ProfileSerializer(serializers.ModelSerializer):
     """
 
     username = serializers.CharField(source="user.username", read_only=True)
-    email = serializers.CharField(source="user.email", read_only=True)
+    email = serializers.CharField(source="user.email")
     user = serializers.IntegerField(source="user.id", read_only=True)
 
     class Meta:
@@ -58,8 +58,15 @@ class ProfileSerializer(serializers.ModelSerializer):
         """
         Update and return the profile instance.
         """
+        user_data = validated_data.pop("user", {})
+
         for attr, value in validated_data.items():
             setattr(instance, attr, value)
+
+        if "email" in user_data:
+            instance.user.email = user_data["email"]
+            instance.user.save()
+
         instance.save()
         return instance
 
