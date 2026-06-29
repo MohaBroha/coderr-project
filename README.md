@@ -33,10 +33,11 @@ Coderr is a Django REST Framework backend for a freelancer marketplace platform.
 git clone https://github.com/MohaBroha/coderr-project.git
 ```
 
-### 2. Navigate to the project directory
+### 2. Navigate to the backend directory
 
 ```bash
 cd coderr-project
+cd backend
 ```
 
 ### 3. Create a virtual environment
@@ -65,13 +66,23 @@ source venv/bin/activate
 pip install -r requirements.txt
 ```
 
-### 6. Apply the database migrations
+### 6. Configure environment variables
+
+Create a `.env` file in the `backend` directory based on the provided `.env.example` file.
+
+Example:
+
+```env
+SECRET_KEY=your_secret_key_here
+```
+
+### 7. Apply the database migrations
 
 ```bash
 python manage.py migrate
 ```
 
-### 7. Start the development server
+### 8. Start the development server
 
 ```bash
 python manage.py runserver
@@ -82,6 +93,22 @@ The development server will be available at:
 ```text
 http://127.0.0.1:8000/
 ```
+
+## Running Tests
+
+Run all tests:
+
+```bash
+python manage.py test --settings=core.test_settings
+```
+
+Run tests for a specific app:
+
+```bash
+python manage.py test reviews_app.tests.test_views --settings=core.test_settings
+```
+
+Replace `reviews_app.tests.test_views` with the desired test module if you want to execute a different test suite.
 
 ## API Endpoints
 

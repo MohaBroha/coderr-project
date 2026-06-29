@@ -2,12 +2,16 @@
 Django settings for the core project.
 """
 
+from dotenv import load_dotenv
+
 from pathlib import Path
+import os
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+load_dotenv(BASE_DIR / ".env")
 
-SECRET_KEY = "django-insecure-%8e@%=x!3+@wzw&!_)^xtd9ftjlg+01z#=9e!-9mp-o^9!p-5m"
+SECRET_KEY = os.getenv("SECRET_KEY")
 
 DEBUG = True
 
