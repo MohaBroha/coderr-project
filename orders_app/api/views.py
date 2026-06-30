@@ -105,7 +105,7 @@ class OrderDetailView(RetrieveUpdateDestroyAPIView):
         """
         if self.request.method == "PATCH":
             return [
-                IsBusinessUser(),
+                IsAuthenticated(),
                 IsOrderBusinessOwner(),
             ]
 

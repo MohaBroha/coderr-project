@@ -48,6 +48,10 @@ class IsOrderBusinessOwner(BasePermission):
         """
         Check whether the requesting user owns the requested order.
         """
+
+        if request.user.profile.type != "business":
+            return False
+
         return obj.business_user == request.user
 
 
