@@ -68,7 +68,21 @@ pip install -r requirements.txt
 
 ### 6. Configure environment variables
 
-Create a `.env` file in the `backend` directory based on the provided `.env.example` file.
+Copy the example environment file:
+
+**Linux / macOS**
+
+```bash
+cp .env.example .env
+```
+
+**Windows**
+
+```powershell
+copy .env.example .env
+```
+
+Then adjust the values in the `.env` file if necessary.
 
 Example:
 

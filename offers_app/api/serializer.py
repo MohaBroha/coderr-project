@@ -311,6 +311,20 @@ class OfferPatchSerializer(serializers.ModelSerializer):
             "details",
         ]
 
+    def validate(self, attrs):
+        """
+        Ensure offer_type is provided for every detail update.
+        """
+        details = self.initial_data.get("details", [])
+
+        for detail in details:
+            if "offer_type" not in detail:
+                raise serializers.ValidationError(
+                    {"details": [{"offer_type": "This field is required."}]}
+                )
+
+        return attrs
+
     def update(self, instance, validated_data):
         """
         Update an offer and its associated offer details.
